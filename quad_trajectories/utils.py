@@ -134,3 +134,30 @@ def generate_horizon_with_velocity(
 
     positions, velocities = vmap(one_sample)(t_samples)
     return positions, velocities
+
+
+def generate_reference_trajectory(
+    traj_func: Callable[[float, TrajContext], jnp.ndarray],
+    t_start: float,
+    horizon: float,
+    num_steps: int,
+    ctx: TrajContext
+) -> Tuple[jnp.ndarray, jnp.ndarray]:
+    """
+    Generate reference trajectory for a prediction horizon.
+
+    This function provides compatibility with the original newton_raphson_enhanced
+    interface. It is equivalent to generate_horizon_with_velocity but with
+    arguments in the original order.
+
+    Args:
+        traj_func: Trajectory function that returns position [x, y, z, yaw]
+        t_start: Starting time for trajectory (seconds)
+        horizon: Prediction horizon length (seconds)
+        num_steps: Number of discretization steps (>=1)
+        ctx: Trajectory context
+
+    Returns:
+        Tuple of (positions, velocities), each of shape (num_steps, 4)
+    """
+    return generate_horizon_with_velocity(traj_func, ctx, t_start, horizon, num_steps)

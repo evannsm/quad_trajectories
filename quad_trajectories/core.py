@@ -277,7 +277,7 @@ def sawtooth(t: float, ctx: TrajContext) -> jnp.ndarray:
         Position array [x, y, z, yaw]
     """
     height = HARDWARE_HEIGHT if not ctx.sim else SIM_HEIGHT
-    flight_time = 180.0
+    flight_time = 120.0
     num_repeats = 2 if ctx.double_speed else 1
     period_spin = 30.0
 
@@ -368,4 +368,4 @@ def triangle(t: float, ctx: TrajContext) -> jnp.ndarray:
     z = -height
     yaw = omega_spin * t
 
-    return jnp.array([0., 0., -3.0, 0.], dtype=jnp.float64)
+    return jnp.array([x, y, z, yaw], dtype=jnp.float64)

@@ -63,6 +63,7 @@ from .utils import (
     get_pos_vel_fn,
     generate_horizon_positions,
     generate_horizon_with_velocity,
+    generate_reference_trajectory,
 )
 
 # JAX utilities
@@ -94,5 +95,6 @@ __all__ = [
     "get_pos_vel_fn",
     "generate_horizon_positions",
     "generate_horizon_with_velocity",
+    "generate_reference_trajectory",
     "jit",
 ]
