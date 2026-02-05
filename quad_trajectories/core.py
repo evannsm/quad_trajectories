@@ -231,8 +231,8 @@ def helix(t: float, ctx: TrajContext) -> jnp.ndarray:
     z_max = 2.6 if not ctx.sim else SIM_HEIGHT
     radius = 0.6
     num_turns = 3
-    cycle_time = 45.0
-    period_spin = 30.0
+    cycle_time = 50.0
+    period_spin = 35.0
 
     omega_spin = 2 * jnp.pi / period_spin if ctx.spin else 0.0
 
