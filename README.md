@@ -1,4 +1,5 @@
-# quad_trajectories
+# JAX-based trajectory definitions with automatic derivative generation for quadrotors
+
 
 A ROS 2 Python library of quadrotor trajectory definitions built on JAX. Trajectories return position-level outputs `[x, y, z, yaw]` — all higher-order derivatives are computed on demand using JAX's forward-mode autodiff (`jacfwd`).
 
