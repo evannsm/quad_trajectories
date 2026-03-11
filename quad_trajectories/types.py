@@ -44,3 +44,4 @@ class TrajectoryType(StrEnum):
     HELIX = "helix"
     SAWTOOTH = "sawtooth"
     TRIANGLE = "triangle"
+    F8_CONTRACTION = "f8_contraction"

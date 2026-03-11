@@ -12,6 +12,8 @@ from jax import jacfwd, vmap
 from .types import TrajContext
 from .jax_utils import jit
 
+GRAVITY: float = 9.81
+
 
 def get_velocity_fn(
     traj_fn: Callable[[float, TrajContext], jnp.ndarray],
@@ -161,3 +163,61 @@ def generate_reference_trajectory(
         Tuple of (positions, velocities), each of shape (num_steps, 4)
     """
     return generate_horizon_with_velocity(traj_func, ctx, t_start, horizon, num_steps)
+
+
+def flat_to_x_u(
+    t: float,
+    flat_output: Callable[[float], jnp.ndarray],
+) -> Tuple[jnp.ndarray, jnp.ndarray]:
+    """Compute feedforward state x_ff and control u_ff from flat output via autodiff.
+
+    Identical to the contraction controller's _flat_to_x_u.
+
+    flat_output(t) returns [px, py, pz, psi].
+
+    State:   x_ff = [px, py, pz, vx, vy, vz, f, phi, th, psi]
+               where f = specific thrust (m/s^2), phi = roll, th = pitch
+    Control: u_ff = [df, dphi, dth, dpsi]  (rates of f, roll, pitch, yaw)
+    """
+    g = GRAVITY
+    px, py, pz, psi = flat_output(t)
+    vx, vy, vz, dpsi = jacfwd(flat_output)(t)
+
+    def f_th_phi(t_):
+        ax, ay, az = jacfwd(jacfwd(flat_output))(t_)[:3]
+        f = jnp.sqrt(ax**2 + ay**2 + (az - g) ** 2)
+        th = jnp.arcsin(-ax / f)
+        phi = jnp.arctan2(ay, g - az)
+        return jnp.array([f, th, phi])
+
+    f, th, phi = f_th_phi(t)
+    df, dth, dphi = jacfwd(f_th_phi)(t)
+    x_ff = jnp.array([px, py, pz, vx, vy, vz, f, phi, th, psi])
+    u_ff = jnp.array([df, dphi, dth, dpsi])
+    return x_ff, u_ff
+
+
+def generate_feedforward_trajectory(
+    traj_fn: Callable[[float, TrajContext], jnp.ndarray],
+    ctx: TrajContext,
+    t_start: float,
+    horizon: float,
+    num_steps: int,
+) -> Tuple[jnp.ndarray, jnp.ndarray]:
+    """Generate feedforward state and control trajectories over a prediction horizon.
+
+    Uses flat_to_x_u at each time step (same autodiff approach as contraction controller).
+
+    Returns:
+        x_ff_traj: shape (num_steps, 10) – [px, py, pz, vx, vy, vz, f, phi, th, psi]
+        u_ff_traj: shape (num_steps,  4) – [df, dphi, dth, dpsi]
+    """
+    if num_steps == 1:
+        t_samples = jnp.array([t_start], dtype=jnp.float64)
+    else:
+        t_samples = jnp.linspace(t_start, t_start + horizon, num_steps, dtype=jnp.float64)
+
+    flat_output = lambda t: traj_fn(t, ctx)
+    one_sample = lambda t: flat_to_x_u(t, flat_output)
+    x_ff_traj, u_ff_traj = vmap(one_sample)(t_samples)
+    return x_ff_traj, u_ff_traj

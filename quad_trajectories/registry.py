@@ -14,6 +14,7 @@ from .core import (
     helix,
     sawtooth,
     triangle,
+    f8_contraction,
 )
 
 # Type alias for trajectory functions
@@ -30,4 +31,5 @@ TRAJ_REGISTRY: Dict[TrajectoryType, TrajectoryFunc] = {
     TrajectoryType.HELIX: helix,
     TrajectoryType.SAWTOOTH: sawtooth,
     TrajectoryType.TRIANGLE: triangle,
+    TrajectoryType.F8_CONTRACTION: f8_contraction,
 }

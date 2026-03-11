@@ -64,6 +64,8 @@ from .utils import (
     generate_horizon_positions,
     generate_horizon_with_velocity,
     generate_reference_trajectory,
+    flat_to_x_u,
+    generate_feedforward_trajectory,
 )
 
 # JAX utilities
@@ -96,5 +98,7 @@ __all__ = [
     "generate_horizon_positions",
     "generate_horizon_with_velocity",
     "generate_reference_trajectory",
+    "flat_to_x_u",
+    "generate_feedforward_trajectory",
     "jit",
 ]

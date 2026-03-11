@@ -319,6 +319,29 @@ def sawtooth(t: float, ctx: TrajContext) -> jnp.ndarray:
 
 
 @jit(static_argnames=("ctx",))
+def f8_contraction(t: float, ctx: TrajContext) -> jnp.ndarray:
+    """Returns a figure-8 (Lissajous 1:2) trajectory position.
+
+    Args:
+        t: Time in seconds
+        ctx: Trajectory context
+
+    Returns:
+        Position array [x, y, z, yaw]
+    """
+    height = SIM_HEIGHT if ctx.sim else HARDWARE_HEIGHT
+    R = 2.0 if ctx.sim else 0.5
+    T = 10.0
+
+    px = R * jnp.sin(2 * jnp.pi * t / T)
+    py = R * jnp.sin(4 * jnp.pi * t / T) / 2
+    pz = -height
+    psi = 0.0
+
+    return jnp.array([px, py, pz, psi], dtype=jnp.float32)
+
+
+@jit(static_argnames=("ctx",))
 def triangle(t: float, ctx: TrajContext) -> jnp.ndarray:
     """Returns equilateral triangle trajectory position (waypoint-based).
 
