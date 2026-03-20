@@ -402,7 +402,7 @@ def triangle(t: float, ctx: TrajContext) -> jnp.ndarray:
 def fig8_contraction(t: float, ctx: TrajContext) -> jnp.ndarray:
     """Returns the larger legacy contraction-workspace figure-eight."""
     height = SIM_HEIGHT if ctx.sim else HARDWARE_HEIGHT
-    radius = 5.0 if ctx.sim else 0.4
+    radius = 2.0 if ctx.sim else 0.4
     period = 10.0
 
     px = radius * jnp.sin(2 * jnp.pi * t / period)
@@ -417,7 +417,7 @@ def fig8_contraction(t: float, ctx: TrajContext) -> jnp.ndarray:
 def fig8_heading_contraction(t: float, ctx: TrajContext) -> jnp.ndarray:
     """Returns the contraction-workspace figure-eight with heading tracking."""
     height = SIM_HEIGHT if ctx.sim else HARDWARE_HEIGHT
-    radius = 3.0 if ctx.sim else 0.4
+    radius = 1.0 if ctx.sim else 0.4
     period = 15.0
     s = 2 * jnp.pi * t / period
 

@@ -2,8 +2,6 @@
 
 import jax
 
-# Enable 64-bit floating point globally
-jax.config.update("jax_enable_x64", True)
 
 
 def jit(fun=None, **kwargs):
